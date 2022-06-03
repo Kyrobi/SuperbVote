@@ -59,7 +59,7 @@
         </repository>
         <repository>
             <id>clip-repo</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>bintray-nuvotifier-repo</id>
@@ -81,13 +81,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.0</version>
+            <version>1.18.20</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.NuVotifier.NuVotifier</groupId>
-            <artifactId>nuvotifier-bukkit</artifactId>
-            <version>v2.6.0</version>
+            <groupId>com.github.NuVotifier</groupId>
+            <artifactId>NuVotifier</artifactId>
+            <version>2.7.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

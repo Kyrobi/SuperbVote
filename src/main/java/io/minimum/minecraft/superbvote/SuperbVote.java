@@ -6,7 +6,7 @@ import io.minimum.minecraft.superbvote.scoreboard.ScoreboardHandler;
 import io.minimum.minecraft.superbvote.signboard.TopPlayerSignFetcher;
 import io.minimum.minecraft.superbvote.signboard.TopPlayerSignListener;
 import io.minimum.minecraft.superbvote.signboard.TopPlayerSignStorage;
-import io.minimum.minecraft.superbvote.storage.QueuedVotesStorage;
+import io.minimum.minecraft.superbvote.migration.QueuedVotesStorage;
 import io.minimum.minecraft.superbvote.storage.RecentVotesStorage;
 import io.minimum.minecraft.superbvote.storage.VoteStorage;
 import io.minimum.minecraft.superbvote.util.BrokenNag;

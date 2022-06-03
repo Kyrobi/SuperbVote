@@ -1,4 +1,4 @@
-package io.minimum.minecraft.superbvote.storage;
+package io.minimum.minecraft.superbvote.migration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -65,8 +65,15 @@ public class QueuedVotesStorage {
 
     public void save() {
         // Save to a temporary file and then copy over the existing file.
+
+        /*
+        Instead of creating a file in the /temp folder of the system which could be full (on like a hosting provider) and cause out of storage error,
+        we create it in the plugin's folder instead
+         */
         try {
-            Path tempPath = Files.createTempFile("superbvote-", ".json");
+            Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
+
+            Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
             try (Writer writer = Files.newBufferedWriter(tempPath, StandardOpenOption.WRITE)) {
                 gson.toJson(queuedVotes, writer);
             }
