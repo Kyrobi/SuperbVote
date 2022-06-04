@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
@@ -76,7 +73,9 @@ public class JsonVoteStorage implements VoteStorage {
         VotingFile vf = new VotingFile(VERSION, records);
 
         // Save the new file
-        Path tempPath = Files.createTempFile("superbvote-", ".json");
+        Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
+        Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
+
         try (Writer writer = Files.newBufferedWriter(tempPath, StandardOpenOption.WRITE)) {
             gson.toJson(vf, writer);
         }
@@ -222,7 +221,10 @@ public class JsonVoteStorage implements VoteStorage {
 
         // Save to a temporary file and then copy over the existing file.
         try {
-            Path tempPath = Files.createTempFile("superbvote-", ".json");
+            Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
+            Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
+
+            //Path tempPath = Files.createTempFile("superbvote-", ".json");
             try (Writer writer = Files.newBufferedWriter(tempPath, StandardOpenOption.WRITE)) {
                 gson.toJson(new VotingFile(VERSION, prs), writer);
             }
