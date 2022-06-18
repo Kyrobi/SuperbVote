@@ -158,7 +158,7 @@ public class SuperbVoteListener implements Listener {
 
     private void afterVoteProcessing() {
         SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-        new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
+        //new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
     }
 
     @EventHandler

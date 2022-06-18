@@ -239,10 +239,10 @@ public class SuperbVoteCommand implements CommandExecutor {
                     SuperbVote.getPlugin().getVoteStorage().clearVotes();
                     SuperbVote.getPlugin().getQueuedVotes().clearVotes();
 
-                    Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
-                        SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-                        new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
-                    });
+                    // Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
+                    //     SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
+                    //     new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
+                    // });
 
                     sender.sendMessage(ChatColor.GREEN + "All votes cleared from the database.");
                 } else {
