@@ -73,6 +73,11 @@ public class QueuedVotesStorage {
         try {
             Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
 
+            if(!Files.exists(path)){
+                File directory = new File("plugins/SuperbVote/temp");
+                directory.mkdir();
+            }
+
             Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
             try (Writer writer = Files.newBufferedWriter(tempPath, StandardOpenOption.WRITE)) {
                 gson.toJson(queuedVotes, writer);

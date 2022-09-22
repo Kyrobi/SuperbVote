@@ -74,6 +74,13 @@ public class JsonVoteStorage implements VoteStorage {
 
         // Save the new file
         Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
+
+        //Make the directory if doesn't exist
+        if(!Files.exists(path)){
+            File directory = new File("plugins/SuperbVote/temp");
+            directory.mkdir();
+        }
+
         Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
 
         try (Writer writer = Files.newBufferedWriter(tempPath, StandardOpenOption.WRITE)) {
@@ -222,6 +229,13 @@ public class JsonVoteStorage implements VoteStorage {
         // Save to a temporary file and then copy over the existing file.
         try {
             Path path = Paths.get("plugins/SuperbVote/temp"); //Specify the folder where the files will be created
+
+            //Create folder if doesn't exist
+            if(!Files.exists(path)){
+                File directory = new File("plugins/SuperbVote/temp");
+                directory.mkdir();
+            }
+
             Path tempPath = Files.createTempFile(path,"superbvote-", ".json");
 
             //Path tempPath = Files.createTempFile("superbvote-", ".json");
