@@ -136,7 +136,7 @@ public class SuperbVoteCommand implements CommandExecutor {
                                 String posStr = Integer.toString(from + i + 1);
                                 sender.sendMessage(config
                                         .getEntryText()
-                                        .getWithOfflinePlayer(sender, new MessageContext(null, leaderboard.get(i), null, null))
+                                        .getWithOfflinePlayer(sender, new MessageContext(null, leaderboard.get(i), null))
                                         .replaceAll("%num%", posStr));
                             }
                             int availablePages = SuperbVote.getPlugin().getVoteStorage().getPagesAvailable(c);

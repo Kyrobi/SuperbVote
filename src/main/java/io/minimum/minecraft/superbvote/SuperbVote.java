@@ -16,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.io.IOException;
 
 public class SuperbVote extends JavaPlugin {
     @Getter
@@ -51,24 +50,18 @@ public class SuperbVote extends JavaPlugin {
             throw new RuntimeException("Exception whilst initializing vote storage", e);
         }
 
-        try {
-            queuedVotes = new QueuedVotesStorage(new File(getDataFolder(), "queued_votes.json"));
-        } catch (IOException e) {
-            throw new RuntimeException("Exception whilst initializing queued vote storage", e);
-        }
-
         recentVotesStorage = new RecentVotesStorage();
 
         scoreboardHandler = new ScoreboardHandler();
         voteServiceCooldown = new VoteServiceCooldown(getConfig().getInt("votes.cooldown-per-service", 3600));
 
+        queuedVotes = new QueuedVotesStorage(new File(getDataFolder(), "data.db"));
+
         getCommand("superbvote").setExecutor(new SuperbVoteCommand());
         getCommand("vote").setExecutor(configuration.getVoteCommand());
-        getCommand("votestreak").setExecutor(configuration.getVoteStreakCommand());
 
         getServer().getPluginManager().registerEvents(new SuperbVoteListener(), this);
         getServer().getScheduler().runTaskTimerAsynchronously(this, voteStorage::save, 20, 20 * 30);
-        getServer().getScheduler().runTaskTimerAsynchronously(this, queuedVotes::save, 20, 20 * 30);
         getServer().getScheduler().runTaskAsynchronously(this, SuperbVote.getPlugin().getScoreboardHandler()::doPopulate);
 
         int r = getConfig().getInt("vote-reminder.repeat");
@@ -90,8 +83,6 @@ public class SuperbVote extends JavaPlugin {
             voteReminderTask.cancel();
             voteReminderTask = null;
         }
-        voteStorage.save();
-        queuedVotes.save();
         voteStorage.close();
     }
 
@@ -102,7 +93,6 @@ public class SuperbVote extends JavaPlugin {
         voteServiceCooldown = new VoteServiceCooldown(getConfig().getInt("votes.cooldown-per-service", 3600));
         getServer().getScheduler().runTaskAsynchronously(this, getScoreboardHandler()::doPopulate);
         getCommand("vote").setExecutor(configuration.getVoteCommand());
-        getCommand("votestreak").setExecutor(configuration.getVoteStreakCommand());
 
         if (voteReminderTask != null) {
             voteReminderTask.cancel();

@@ -6,9 +6,8 @@
 # Database configuration.
 storage:
   sqlite:
-    file: votes.db
+    file: data.db
     table: votes
-    streaks-table: streaks
     read-only: false
 
 # General vote configuration.
@@ -19,26 +18,6 @@ votes:
 
   # Whether or not to treat fake votes as real votes
   process-fake-votes: true
-
-# Streaks configuration
-# Important: Streaks does work with SQLite storage
-streaks:
-  enabled: false
-  # Fetch streaks almost everywhere to enable %streak%, %streak_days%, and %streak_today_services% placeholders
-  # outside of streak-related commands
-  enable-placeholders: true
-
-  # Use time of last vote from the database to combine with `votes.cooldown-per-service`
-  # Basically turn the `votes.cooldown-per-service` into a database-based cooldown instead of a memory-based one
-  shared-cooldown-per-service: true
-
-  command:
-    # note: will be disabled if streaks are disabled
-    enabled: true
-    use-json-text: false
-    text: |-
-      You currently hold a vote streak of %streak% (%streak_days% days), keep going!
-      You've voted on %streak_today_services% website(s) out of X today.
 
 # Rewards. This is the main section you will need to edit. Ordering is important.
 rewards:

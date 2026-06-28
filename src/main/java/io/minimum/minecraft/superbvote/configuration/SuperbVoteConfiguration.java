@@ -33,11 +33,9 @@ public class SuperbVoteConfiguration {
 
     private final List<VoteReward> rewards = new ArrayList<>();
     private final VoteMessage reminderMessage;
-    private final CommonCommand voteCommand, voteStreakCommand;
+    private final CommonCommand voteCommand;
 
     private final TextLeaderboardConfiguration textLeaderboardConfiguration;
-
-    private final StreaksConfiguration streaksConfiguration;
 
     private boolean configurationError = false;
 
@@ -95,18 +93,9 @@ public class SuperbVoteConfiguration {
         if (configuration.getBoolean("vote-command.enabled")) {
             boolean useJson = configuration.getBoolean("vote-command.use-json-text");
             VoteMessage voteMessage = VoteMessages.from(configuration, "vote-command.text", false, useJson);
-            voteCommand = new CommonCommand(voteMessage, false);
+            voteCommand = new CommonCommand(voteMessage);
         } else {
             voteCommand = null;
-        }
-
-        streaksConfiguration = initializeStreaksConfiguration();
-        if (streaksConfiguration.isEnabled() && configuration.getBoolean("streaks.command.enabled")) {
-            boolean useJson = configuration.getBoolean("streaks.command.use-json-text");
-            VoteMessage voteStreakMessage = VoteMessages.from(configuration, "streaks.command.text", false, useJson);
-            voteStreakCommand = new CommonCommand(voteStreakMessage, true);
-        } else {
-            voteStreakCommand = null;
         }
 
         textLeaderboardConfiguration = new TextLeaderboardConfiguration(
@@ -161,27 +150,14 @@ public class SuperbVoteConfiguration {
                 .replaceAll("%player_uuid%", vote.getUuid().toString());
     }
 
-    private StreaksConfiguration initializeStreaksConfiguration() {
-        ConfigurationSection section = configuration.getConfigurationSection("streaks");
-        if (section == null) {
-            return new StreaksConfiguration(false, false, false);
-        }
-
-        boolean enabled = section.getBoolean("enabled");
-        boolean placeholdersEnabled = section.getBoolean("enable-placeholders");
-        boolean sharedCooldownPerService = section.getBoolean("shared-cooldown-per-service");
-        return new StreaksConfiguration(enabled, enabled && placeholdersEnabled, enabled && sharedCooldownPerService);
-    }
-
     public VoteStorage initializeVoteStorage() throws IOException {
-        String file = configuration.getString("storage.sqlite.file", "votes.db");
+        String file = configuration.getString("storage.sqlite.file", "data.db");
         String table = configuration.getString("storage.sqlite.table", "votes");
-        String streaksTableName = configuration.getString("storage.sqlite.streaks-table", "streaks");
         boolean readOnly = configuration.getBoolean("storage.sqlite.read-only", false);
 
         SqliteVoteStorage storage = new SqliteVoteStorage(
                 new File(SuperbVote.getPlugin().getDataFolder(), file),
-                table, streaksTableName, readOnly);
+                table, readOnly);
         storage.initialize();
         return storage;
     }

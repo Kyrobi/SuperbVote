@@ -3,8 +3,6 @@ package io.minimum.minecraft.superbvote.commands;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.configuration.message.MessageContext;
 import io.minimum.minecraft.superbvote.configuration.message.VoteMessage;
-import io.minimum.minecraft.superbvote.storage.ExtendedVoteStorage;
-import io.minimum.minecraft.superbvote.storage.VoteStorage;
 import io.minimum.minecraft.superbvote.util.BrokenNag;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -17,7 +15,6 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public class CommonCommand implements CommandExecutor {
     private final VoteMessage message;
-    private final boolean streakRelated;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
@@ -33,8 +30,7 @@ public class CommonCommand implements CommandExecutor {
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
-            VoteStorage voteStorage = SuperbVote.getPlugin().getVoteStorage();
-            MessageContext ctx = new MessageContext(null, voteStorage.getVotes(player.getUniqueId()), voteStorage.getVoteStreakIfSupported(player.getUniqueId(), streakRelated), player);
+            MessageContext ctx = new MessageContext(null, SuperbVote.getPlugin().getVoteStorage().getVotes(player.getUniqueId()), player);
             message.sendAsReminder(player, ctx);
         });
         return true;
