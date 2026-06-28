@@ -1,16 +1,12 @@
 package io.minimum.minecraft.superbvote.configuration;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.pool.HikariPool;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.commands.CommonCommand;
 import io.minimum.minecraft.superbvote.configuration.message.OfflineVoteMessages;
 import io.minimum.minecraft.superbvote.configuration.message.VoteMessage;
 import io.minimum.minecraft.superbvote.configuration.message.VoteMessages;
-import io.minimum.minecraft.superbvote.storage.JsonVoteStorage;
-import io.minimum.minecraft.superbvote.storage.MysqlVoteStorage;
+import io.minimum.minecraft.superbvote.storage.SqliteVoteStorage;
 import io.minimum.minecraft.superbvote.storage.VoteStorage;
 import io.minimum.minecraft.superbvote.util.PlayerVotes;
 import io.minimum.minecraft.superbvote.votes.Vote;
@@ -44,8 +40,6 @@ public class SuperbVoteConfiguration {
     private final StreaksConfiguration streaksConfiguration;
 
     private boolean configurationError = false;
-
-    private static final List<String> SUPPORTED_STORAGE = ImmutableList.of("json", "mysql");
 
     public SuperbVoteConfiguration(ConfigurationSection section) {
         this.configuration = section;
@@ -180,42 +174,15 @@ public class SuperbVoteConfiguration {
     }
 
     public VoteStorage initializeVoteStorage() throws IOException {
-        String storage = configuration.getString("storage.database");
-        if (!SUPPORTED_STORAGE.contains(storage)) {
-            SuperbVote.getPlugin().getLogger().info("Storage method '" + storage + "' is not valid, using JSON storage.");
-            storage = "json";
-        }
+        String file = configuration.getString("storage.sqlite.file", "votes.db");
+        String table = configuration.getString("storage.sqlite.table", "votes");
+        String streaksTableName = configuration.getString("storage.sqlite.streaks-table", "streaks");
+        boolean readOnly = configuration.getBoolean("storage.sqlite.read-only", false);
 
-        switch (storage) {
-            case "json":
-                String file = configuration.getString("storage.json.file");
-                if (file == null) {
-                    file = "votes.json";
-                    SuperbVote.getPlugin().getLogger().info("No file found in configuration, using 'votes.json'.");
-                }
-                return new JsonVoteStorage(new File(SuperbVote.getPlugin().getDataFolder(), file));
-            case "mysql":
-                String host = configuration.getString("storage.mysql.host", "localhost");
-                int port = configuration.getInt("storage.mysql.port", 3306);
-                String username = configuration.getString("storage.mysql.username", "root");
-                String password = configuration.getString("storage.mysql.password", "");
-                String database = configuration.getString("storage.mysql.database", "superbvote");
-                String table = configuration.getString("storage.mysql.table", "superbvote");
-                String streaksTableName = configuration.getString("storage.mysql.streaks-table");
-                boolean readOnly = configuration.getBoolean("storage.mysql.read-only");
-
-                HikariConfig config = new HikariConfig();
-                config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
-                config.setUsername(username);
-                config.setPassword(password);
-                config.setMinimumIdle(2);
-                config.setMaximumPoolSize(6);
-                HikariPool pool = new HikariPool(config);
-                MysqlVoteStorage mysqlVoteStorage = new MysqlVoteStorage(pool, table, streaksTableName, readOnly);
-                mysqlVoteStorage.initialize();
-                return mysqlVoteStorage;
-        }
-
-        return null;
+        SqliteVoteStorage storage = new SqliteVoteStorage(
+                new File(SuperbVote.getPlugin().getDataFolder(), file),
+                table, streaksTableName, readOnly);
+        storage.initialize();
+        return storage;
     }
 }

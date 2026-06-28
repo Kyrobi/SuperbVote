@@ -5,14 +5,8 @@
 
 # Database configuration.
 storage:
-  database: json
-  json:
-    file: votes.json
-  mysql:
-    host: 127.0.0.1
-    username: root
-    password: topsecret
-    database: superbvote
+  sqlite:
+    file: votes.db
     table: votes
     streaks-table: streaks
     read-only: false
@@ -27,7 +21,7 @@ votes:
   process-fake-votes: true
 
 # Streaks configuration
-# Important: Streaks does not support JSON storage
+# Important: Streaks does work with SQLite storage
 streaks:
   enabled: false
   # Fetch streaks almost everywhere to enable %streak%, %streak_days%, and %streak_today_services% placeholders

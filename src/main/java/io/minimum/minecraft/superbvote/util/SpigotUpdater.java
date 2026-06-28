@@ -1,7 +1,7 @@
 package io.minimum.minecraft.superbvote.util;
 
 import com.google.common.io.ByteStreams;
-import io.minimum.minecraft.superbvote.SuperbVote;;
+import io.minimum.minecraft.superbvote.SuperbVote;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

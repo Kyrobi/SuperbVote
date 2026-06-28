@@ -2,14 +2,14 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
-      <option name="id" value="bintray-nuvotifier-repo" />
-      <option name="name" value="bintray-nuvotifier-repo" />
-      <option name="url" value="https://dl.bintray.com/nuvotifier/maven/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="bintray-nuvotifier-repo" />
+      <option name="name" value="bintray-nuvotifier-repo" />
+      <option name="url" value="https://dl.bintray.com/nuvotifier/maven/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jitpack.io" />
@@ -20,6 +20,11 @@
       <option name="id" value="spigotmc-repo" />
       <option name="name" value="spigotmc-repo" />
       <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="papermc-repo" />
+      <option name="name" value="papermc-repo" />
+      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

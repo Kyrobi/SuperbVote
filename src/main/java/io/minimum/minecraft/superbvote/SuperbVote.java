@@ -79,10 +79,6 @@ public class SuperbVote extends JavaPlugin {
             }
         }
 
-        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            getLogger().info("Using clip's PlaceholderAPI to provide extra placeholders.");
-        }
-
         SpigotUpdater updater = new SpigotUpdater();
         getServer().getScheduler().runTaskAsynchronously(this, updater);
         getServer().getPluginManager().registerEvents(updater, this);

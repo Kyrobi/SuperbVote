@@ -4,7 +4,7 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.commands.SuperbVoteCommand;
 import io.minimum.minecraft.superbvote.configuration.message.MessageContext;
-import io.minimum.minecraft.superbvote.storage.MysqlVoteStorage;
+import io.minimum.minecraft.superbvote.storage.SqliteVoteStorage;
 import io.minimum.minecraft.superbvote.storage.VoteStorage;
 import io.minimum.minecraft.superbvote.util.BrokenNag;
 import io.minimum.minecraft.superbvote.util.PlayerVotes;
@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 
 import java.util.Date;
 import java.util.List;
@@ -127,8 +126,8 @@ public class SuperbVoteListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
             // Update names in MySQL, if it is being used.
-            if (SuperbVote.getPlugin().getVoteStorage() instanceof MysqlVoteStorage) {
-                ((MysqlVoteStorage) SuperbVote.getPlugin().getVoteStorage()).updateName(event.getPlayer());
+            if (SuperbVote.getPlugin().getVoteStorage() instanceof SqliteVoteStorage) {
+                ((SqliteVoteStorage) SuperbVote.getPlugin().getVoteStorage()).updateName(event.getPlayer());
             }
 
             // Process queued votes.
@@ -157,12 +156,5 @@ public class SuperbVoteListener implements Listener {
 
     private void afterVoteProcessing() {
         SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-    }
-
-    @EventHandler
-    public void onPluginEnable(PluginEnableEvent event) {
-        if (event.getPlugin().getName().equals("PlaceholderAPI")) {
-            SuperbVote.getPlugin().getLogger().info("Using clip's PlaceholderAPI to provide extra placeholders.");
-        }
     }
 }
