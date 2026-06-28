@@ -4,7 +4,6 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.commands.SuperbVoteCommand;
 import io.minimum.minecraft.superbvote.configuration.message.MessageContext;
-import io.minimum.minecraft.superbvote.signboard.TopPlayerSignFetcher;
 import io.minimum.minecraft.superbvote.storage.MysqlVoteStorage;
 import io.minimum.minecraft.superbvote.storage.VoteStorage;
 import io.minimum.minecraft.superbvote.util.BrokenNag;
@@ -158,7 +157,6 @@ public class SuperbVoteListener implements Listener {
 
     private void afterVoteProcessing() {
         SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-        //new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
     }
 
     @EventHandler

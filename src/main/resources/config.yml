@@ -125,10 +125,3 @@ leaderboard:
     title: Top voters
     max: 10
 
-# Control top player signs.
-top-player-signs:
-  format:
-  - "#%num%"
-  - ""
-  - "%player%"
-  - "&l%votes% &rvotes"

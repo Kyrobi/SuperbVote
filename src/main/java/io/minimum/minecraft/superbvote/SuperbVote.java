@@ -3,9 +3,6 @@ package io.minimum.minecraft.superbvote;
 import io.minimum.minecraft.superbvote.commands.SuperbVoteCommand;
 import io.minimum.minecraft.superbvote.configuration.SuperbVoteConfiguration;
 import io.minimum.minecraft.superbvote.scoreboard.ScoreboardHandler;
-import io.minimum.minecraft.superbvote.signboard.TopPlayerSignFetcher;
-import io.minimum.minecraft.superbvote.signboard.TopPlayerSignListener;
-import io.minimum.minecraft.superbvote.signboard.TopPlayerSignStorage;
 import io.minimum.minecraft.superbvote.migration.QueuedVotesStorage;
 import io.minimum.minecraft.superbvote.storage.RecentVotesStorage;
 import io.minimum.minecraft.superbvote.storage.VoteStorage;
@@ -36,8 +33,6 @@ public class SuperbVote extends JavaPlugin {
     private ScoreboardHandler scoreboardHandler;
     @Getter
     private VoteServiceCooldown voteServiceCooldown;
-    @Getter
-    private TopPlayerSignStorage topPlayerSignStorage;
     private BukkitTask voteReminderTask;
 
     @Override
@@ -67,23 +62,14 @@ public class SuperbVote extends JavaPlugin {
         scoreboardHandler = new ScoreboardHandler();
         voteServiceCooldown = new VoteServiceCooldown(getConfig().getInt("votes.cooldown-per-service", 3600));
 
-        topPlayerSignStorage = new TopPlayerSignStorage();
-        try {
-            topPlayerSignStorage.load(new File(getDataFolder(), "top_voter_signs.json"));
-        } catch (IOException e) {
-            throw new RuntimeException("Exception whilst loading top player signs", e);
-        }
-
         getCommand("superbvote").setExecutor(new SuperbVoteCommand());
         getCommand("vote").setExecutor(configuration.getVoteCommand());
         getCommand("votestreak").setExecutor(configuration.getVoteStreakCommand());
 
         getServer().getPluginManager().registerEvents(new SuperbVoteListener(), this);
-        getServer().getPluginManager().registerEvents(new TopPlayerSignListener(), this);
         getServer().getScheduler().runTaskTimerAsynchronously(this, voteStorage::save, 20, 20 * 30);
         getServer().getScheduler().runTaskTimerAsynchronously(this, queuedVotes::save, 20, 20 * 30);
         getServer().getScheduler().runTaskAsynchronously(this, SuperbVote.getPlugin().getScoreboardHandler()::doPopulate);
-        //getServer().getScheduler().runTaskAsynchronously(this, new TopPlayerSignFetcher(topPlayerSignStorage.getSignList()));
 
         int r = getConfig().getInt("vote-reminder.repeat");
         String text = getConfig().getString("vote-reminder.message");
@@ -111,11 +97,6 @@ public class SuperbVote extends JavaPlugin {
         voteStorage.save();
         queuedVotes.save();
         voteStorage.close();
-        try {
-            topPlayerSignStorage.save(new File(getDataFolder(), "top_voter_signs.json"));
-        } catch (IOException e) {
-            throw new RuntimeException("Exception whilst saving top player signs", e);
-        }
     }
 
     public void reloadPlugin() {

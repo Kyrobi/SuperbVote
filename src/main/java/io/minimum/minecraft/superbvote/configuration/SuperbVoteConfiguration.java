@@ -7,7 +7,6 @@ import com.zaxxer.hikari.pool.HikariPool;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.commands.CommonCommand;
 import io.minimum.minecraft.superbvote.configuration.message.OfflineVoteMessages;
-import io.minimum.minecraft.superbvote.configuration.message.PlainStringMessage;
 import io.minimum.minecraft.superbvote.configuration.message.VoteMessage;
 import io.minimum.minecraft.superbvote.configuration.message.VoteMessages;
 import io.minimum.minecraft.superbvote.storage.JsonVoteStorage;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 @Getter
 public class SuperbVoteConfiguration {
@@ -42,7 +40,6 @@ public class SuperbVoteConfiguration {
     private final CommonCommand voteCommand, voteStreakCommand;
 
     private final TextLeaderboardConfiguration textLeaderboardConfiguration;
-    private final TopPlayerSignsConfiguration topPlayerSignsConfiguration;
 
     private final StreaksConfiguration streaksConfiguration;
 
@@ -123,12 +120,6 @@ public class SuperbVoteConfiguration {
                 OfflineVoteMessages.from(configuration.getConfigurationSection("leaderboard.text"), "header"),
                 OfflineVoteMessages.from(configuration.getConfigurationSection("leaderboard.text"), "entry"),
                 OfflineVoteMessages.from(configuration.getConfigurationSection("leaderboard.text"), "page")
-        );
-
-        topPlayerSignsConfiguration = new TopPlayerSignsConfiguration(
-                configuration.getStringList("top-player-signs.format").stream()
-                        .map(PlainStringMessage::new)
-                        .collect(Collectors.toList())
         );
     }
 

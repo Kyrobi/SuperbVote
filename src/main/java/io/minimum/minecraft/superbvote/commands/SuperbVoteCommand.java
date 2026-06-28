@@ -8,7 +8,6 @@ import io.minimum.minecraft.superbvote.migration.GAListenerMigration;
 import io.minimum.minecraft.superbvote.migration.Migration;
 import io.minimum.minecraft.superbvote.migration.ProgressListener;
 import io.minimum.minecraft.superbvote.migration.SuperbVoteJsonFileMigration;
-import io.minimum.minecraft.superbvote.signboard.TopPlayerSignFetcher;
 import io.minimum.minecraft.superbvote.util.BrokenNag;
 import io.minimum.minecraft.superbvote.util.PlayerVotes;
 import lombok.Data;
@@ -239,11 +238,6 @@ public class SuperbVoteCommand implements CommandExecutor {
                     SuperbVote.getPlugin().getVoteStorage().clearVotes();
                     SuperbVote.getPlugin().getQueuedVotes().clearVotes();
 
-                    // Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
-                    //     SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-                    //     new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
-                    // });
-
                     sender.sendMessage(ChatColor.GREEN + "All votes cleared from the database.");
                 } else {
                     sender.sendMessage(ChatColor.RED + "You took a wrong turn. Try again using /sv clear.");
@@ -301,7 +295,6 @@ public class SuperbVoteCommand implements CommandExecutor {
                                 SuperbVote.getPlugin().getLogger().info("Successfully converted all " + records + " records to SuperbVote!");
 
                                 SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-                                new TopPlayerSignFetcher(SuperbVote.getPlugin().getTopPlayerSignStorage().getSignList()).run();
                             }
                         });
                         sender.sendMessage(ChatColor.GREEN + "Migration succeeded!");
