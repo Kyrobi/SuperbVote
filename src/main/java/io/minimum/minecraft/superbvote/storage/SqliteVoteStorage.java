@@ -243,6 +243,38 @@ public class SqliteVoteStorage implements VoteStorage {
     }
 
     @Override
+    public List<PlayerVotes> getPlayersNeedingReminder(List<UUID> onlinePlayers, int cooldownSeconds) {
+        if (onlinePlayers.isEmpty()) {
+            return ImmutableList.of();
+        }
+        List<PlayerVotes> votes = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            String valueStatement = Joiner.on(", ").join(Collections.nCopies(onlinePlayers.size(), "?"));
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "SELECT uuid, last_name, votes FROM " + tableName +
+                            " WHERE uuid IN (" + valueStatement + ") AND (strftime('%s', 'now') - last_vote) >= ?")) {
+                for (int i = 0; i < onlinePlayers.size(); i++) {
+                    statement.setString(i + 1, onlinePlayers.get(i).toString());
+                }
+                statement.setInt(onlinePlayers.size() + 1, cooldownSeconds);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        votes.add(new PlayerVotes(
+                                UUID.fromString(resultSet.getString(1)),
+                                resultSet.getString(2),
+                                resultSet.getInt(3),
+                                PlayerVotes.Type.CURRENT));
+                    }
+                }
+            }
+            return votes;
+        } catch (SQLException e) {
+            SuperbVote.getPlugin().getLogger().log(Level.SEVERE, "Unable to get players needing reminder", e);
+            return ImmutableList.of();
+        }
+    }
+
+    @Override
     public void save() {}
 
     @Override

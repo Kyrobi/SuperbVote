@@ -27,6 +27,8 @@ public interface VoteStorage {
 
     List<PlayerVotes> getAllPlayersWithNoVotesToday(List<UUID> onlinePlayers);
 
+    List<PlayerVotes> getPlayersNeedingReminder(List<UUID> onlinePlayers, int cooldownSeconds);
+
     void save();
 
     void close();
