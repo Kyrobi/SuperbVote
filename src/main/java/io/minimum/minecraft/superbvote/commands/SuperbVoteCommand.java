@@ -4,10 +4,6 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import io.minimum.minecraft.superbvote.SuperbVote;
 import io.minimum.minecraft.superbvote.configuration.TextLeaderboardConfiguration;
 import io.minimum.minecraft.superbvote.configuration.message.MessageContext;
-import io.minimum.minecraft.superbvote.migration.GAListenerMigration;
-import io.minimum.minecraft.superbvote.migration.Migration;
-import io.minimum.minecraft.superbvote.migration.ProgressListener;
-import io.minimum.minecraft.superbvote.migration.SuperbVoteJsonFileMigration;
 import io.minimum.minecraft.superbvote.util.BrokenNag;
 import io.minimum.minecraft.superbvote.util.PlayerVotes;
 import lombok.Data;
@@ -19,11 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class SuperbVoteCommand implements CommandExecutor {
     public static final String FAKE_HOST_NAME_FOR_VOTE = UUID.randomUUID().toString();
@@ -45,9 +37,6 @@ public class SuperbVoteCommand implements CommandExecutor {
         if (sender.hasPermission("superbvote.admin")) {
             sender.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "/sv fakevote <player> [service]");
             sender.sendMessage(ChatColor.GRAY + "Issues a fake vote for the specified player.");
-
-            sender.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "/sv migrate <gal>");
-            sender.sendMessage(ChatColor.GRAY + "Migrate votes from another vote plugin.");
 
             sender.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "/sv reload");
             sender.sendMessage(ChatColor.GRAY + "Reloads the plugin's configuration.");
@@ -243,66 +232,6 @@ public class SuperbVoteCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You took a wrong turn. Try again using /sv clear.");
                 }
 
-                return true;
-            case "migrate":
-                if (!sender.hasPermission("superbvote.admin")) {
-                    sender.sendMessage(ChatColor.RED + "You can't do this.");
-                    return true;
-                }
-                if (args.length != 2) {
-                    sender.sendMessage(ChatColor.RED + "Need to specify an argument.");
-                    sender.sendMessage(ChatColor.RED + "/sv migrate <gal|svjson>");
-                    sender.sendMessage(ChatColor.RED + "Migrate votes from another vote plugin.");
-                    return true;
-                }
-                Migration migration;
-                switch (args[1]) {
-                    case "gal":
-                        migration = new GAListenerMigration();
-                        break;
-                    case "svjson":
-                        migration = new SuperbVoteJsonFileMigration();
-                        break;
-                    default:
-                        sender.sendMessage(ChatColor.RED + "Not a valid listener. Currently supported: gal, svjson.");
-                        return true;
-                }
-                Bukkit.getScheduler().runTaskAsynchronously(SuperbVote.getPlugin(), () -> {
-                    if (SuperbVote.getPlugin().getVoteStorage().getPagesAvailable(1) > 0) {
-                        sender.sendMessage(ChatColor.RED + "You already have votes in the database. Use /sv clear and try again.");
-                        return;
-                    }
-                    try {
-                        sender.sendMessage(ChatColor.GRAY + "Migrating... (you can check the progress in the console)");
-                        migration.execute(new ProgressListener() {
-                            @Override
-                            public void onStart(int records) {
-                                SuperbVote.getPlugin().getLogger().info("Converting " + records + " records from " + migration.getName() + " to SuperbVote...");
-                            }
-
-                            @Override
-                            public void onRecordBatch(int num, int total) {
-                                String percentage = BigDecimal.valueOf(num)
-                                        .divide(BigDecimal.valueOf(total), BigDecimal.ROUND_HALF_UP)
-                                        .multiply(BigDecimal.valueOf(100))
-                                        .setScale(1, BigDecimal.ROUND_HALF_UP)
-                                        .toPlainString();
-                                SuperbVote.getPlugin().getLogger().info("Converted " + num + " records to SuperbVote... (" + percentage + "% complete)");
-                            }
-
-                            @Override
-                            public void onFinish(int records) {
-                                SuperbVote.getPlugin().getLogger().info("Successfully converted all " + records + " records to SuperbVote!");
-
-                                SuperbVote.getPlugin().getScoreboardHandler().doPopulate();
-                            }
-                        });
-                        sender.sendMessage(ChatColor.GREEN + "Migration succeeded!");
-                    } catch (Exception e) {
-                        SuperbVote.getPlugin().getLogger().log(Level.SEVERE, "Unable to migrate", e);
-                        sender.sendMessage(ChatColor.RED + "Migration failed. Check the console for details.");
-                    }
-                });
                 return true;
             default:
                 sendHelp(sender);

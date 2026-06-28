@@ -1,4 +1,4 @@
-package io.minimum.minecraft.superbvote.migration;
+package io.minimum.minecraft.superbvote.storage;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
